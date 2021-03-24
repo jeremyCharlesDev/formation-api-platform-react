@@ -39,9 +39,9 @@ class InvoiceChronoSubscriber implements EventSubscriberInterface
         // 2.J'ai besoin du repository des factures (InvoiceRepository)
         // 3. Choper la dernière facture qui a été insérée, et choper son chrono
         // 4. Dans cette nouvelle facture, on donne le dernier chrono + 1
-        $nextChrono = $this->repository->findNextChrono($user);
-
+        
         if($invoice instanceof Invoice && $method === "POST"){
+            $nextChrono = $this->repository->findNextChrono($user);
             $invoice->setChrono($nextChrono);
 
             if(empty($invoice->getSentAt())){
