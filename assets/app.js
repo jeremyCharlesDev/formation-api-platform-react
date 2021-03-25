@@ -5,33 +5,58 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route, withRouter } from "react-router-dom";
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
 
 // start the Stimulus application
 import './bootstrap';
+
 import Navbar from './js/components/Navbar';
 import HomePage from './js/pages/HomePage';
 import CustomersPage from './js/pages/CustomersPage';
 import CustomersPageWithPagination from './js/pages/CustomersPageWithPagination';
 import InvoicesPage from './js/pages/InvoicesPage';
+import LoginPage from './js/pages/LoginPage';
+import AuthAPI from './js/services/authAPI';
+import AuthContext from './js/contexts/AuthContext';
+import PrivateRoute from './js/components/PrivateRoute';
 
+AuthAPI.setup();
 
 const App = () => {
-    return <HashRouter>
-                <Navbar/>
+
+    const [isAuthenticated, setIsAuthenticated] = useState(AuthAPI.isAuthenticated());
+
+    const NavbarWithRouter = withRouter(Navbar);
+
+    return (
+    
+        <AuthContext.Provider value={{
+            isAuthenticated,
+            setIsAuthenticated
+        }}>
+            <HashRouter>
+                <NavbarWithRouter />
                 <main className="container pt-5">
                     <Switch>
-                        <Route path="/customers" component={CustomersPage} />
-                        <Route path="/invoices" component={InvoicesPage} />
+                        <Route path="/login" component={LoginPage} />
+
+                        <PrivateRoute path="/invoices" component={InvoicesPage} />
+                        <PrivateRoute path="/customers" component={CustomersPage} />
+
+                        {/* <Route path="/customers" render={(props) => 
+                            isAuthenticated ? (<CustomersPage {...props} />) : (<Redirect to="/login" />)
+                        } /> */}
                         <Route path="/" component={HomePage} />
                     </Switch>
                 </main>
-          </HashRouter>;
+            </HashRouter>
+        </AuthContext.Provider>
+    );
 }
 
 const rootElement = document.querySelector('#app');
