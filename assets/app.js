@@ -7,7 +7,7 @@
 
 import React, {useState, useContext} from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Switch, Route, withRouter } from "react-router-dom";
+import { HashRouter, Switch, Route, withRouter, Redirect } from "react-router-dom";
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
@@ -24,6 +24,9 @@ import LoginPage from './js/pages/LoginPage';
 import AuthAPI from './js/services/authAPI';
 import AuthContext from './js/contexts/AuthContext';
 import PrivateRoute from './js/components/PrivateRoute';
+import CustomerPage from './js/pages/CustomerPage';
+import InvoicePage from './js/pages/InvoicePage';
+import RegisterPage from './js/pages/RegisterPage';
 
 AuthAPI.setup();
 
@@ -44,7 +47,11 @@ const App = () => {
                 <main className="container pt-5">
                     <Switch>
                         <Route path="/login" component={LoginPage} />
+                        
+                        <Route path="/register" component={RegisterPage} />
 
+                        <PrivateRoute path="/invoices/:id" component={InvoicePage} />
+                        <PrivateRoute path="/customers/:id" component={CustomerPage} />
                         <PrivateRoute path="/invoices" component={InvoicesPage} />
                         <PrivateRoute path="/customers" component={CustomersPage} />
 
